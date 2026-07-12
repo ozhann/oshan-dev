@@ -8,13 +8,19 @@ interface Props {
 }
 
 const { calendar, username } = Astro.props;
+const weekCount = Math.max(calendar.weeks.length, 1);
 const labels = monthLabels(calendar.weeks);
-const dayNames = ["", "Mon", "", "Wed", "", "Fri", ""];
+const dayNames = ["", "M", "", "W", "", "F", ""];
 ---
 
 <div class="heatmap-wrap">
-  <div class="heatmap" role="img" aria-label={`GitHub contribution activity for ${username}`}>
-    <div class="heatmap-months" style={`grid-template-columns: repeat(${calendar.weeks.length}, 12px);`}>
+  <div
+    class="heatmap"
+    role="img"
+    aria-label={`GitHub contribution activity for ${username}`}
+    style={`--weeks: ${weekCount}`}
+  >
+    <div class="heatmap-months">
       {
         calendar.weeks.map((_, index) => {
           const label = labels.find((item) => item.index === index);
@@ -34,7 +40,7 @@ const dayNames = ["", "Mon", "", "Wed", "", "Fri", ""];
                 class="heat-cell"
                 data-level={day.level}
                 title={`${day.count} contribution${day.count === 1 ? "" : "s"} on ${day.date}`}
-                style={`animation-delay: ${(weekIndex * 7 + dayIndex) * 2}ms`}
+                style={`animation-delay: ${Math.min((weekIndex * 7 + dayIndex) * 1.5, 400)}ms`}
               />
             )),
           )
