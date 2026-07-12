@@ -107,13 +107,14 @@ img {
   justify-content: center;
   width: 2rem;
   height: 2rem;
-  margin: 0.15rem 0 0;
+  margin: 0;
   padding: 0;
   border: 0;
   border-radius: 999px;
   background: transparent;
   color: var(--muted);
   cursor: pointer;
+  flex-shrink: 0;
 }
 
 .theme-toggle:hover,
@@ -144,6 +145,16 @@ html[data-theme="dark"] .theme-toggle .icon-moon {
   margin: 0 auto;
   padding: 2.75rem 0 3rem;
   text-align: center;
+}
+
+.topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  width: 100%;
+  margin: 0 0 1.75rem;
+  min-height: 2rem;
 }
 
 .identity {
@@ -181,8 +192,7 @@ html[data-theme="dark"] .theme-toggle .icon-moon {
   letter-spacing: 0.04em;
   text-transform: uppercase;
   color: var(--muted);
-  animation: rise 0.7s ease both;
-  animation-delay: 0.08s;
+  text-align: left;
 }
 
 .online-dot {
