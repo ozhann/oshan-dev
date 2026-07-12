@@ -1,0 +1,48 @@
+---
+import type { ContributionCalendar } from "../lib/github";
+import { monthLabels } from "../lib/github";
+
+interface Props {
+  calendar: ContributionCalendar;
+  username: string;
+}
+
+const { calendar, username } = Astro.props;
+const labels = monthLabels(calendar.weeks);
+const dayNames = ["", "Mon", "", "Wed", "", "Fri", ""];
+---
+
+<div class="heatmap-wrap">
+  <div class="heatmap" role="img" aria-label={`GitHub contribution activity for ${username}`}>
+    <div class="heatmap-months" style={`grid-template-columns: repeat(${calendar.weeks.length}, 12px);`}>
+      {
+        calendar.weeks.map((_, index) => {
+          const label = labels.find((item) => item.index === index);
+          return <span>{label?.label ?? ""}</span>;
+        })
+      }
+    </div>
+    <div class="heatmap-body">
+      <div class="heatmap-days" aria-hidden="true">
+        {dayNames.map((name) => <span>{name}</span>)}
+      </div>
+      <div class="heatmap-grid">
+        {
+          calendar.weeks.map((week, weekIndex) =>
+            week.days.map((day, dayIndex) => (
+              <div
+                class="heat-cell"
+                data-level={day.level}
+                title={`${day.count} contribution${day.count === 1 ? "" : "s"} on ${day.date}`}
+                style={`animation-delay: ${(weekIndex * 7 + dayIndex) * 2}ms`}
+              />
+            )),
+          )
+        }
+      </div>
+    </div>
+  </div>
+  <p class="heatmap-meta">
+    {calendar.total.toLocaleString()} contributions on GitHub in the last year
+  </p>
+</div>
