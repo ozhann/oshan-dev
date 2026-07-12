@@ -43,36 +43,7 @@ const year = new Date().getFullYear();
     </script>
   </head>
   <body>
-    <div class="atmosphere" aria-hidden="true">
-      <span class="atmosphere-orb one"></span>
-      <span class="atmosphere-orb two"></span>
-      <span class="atmosphere-orb three"></span>
-    </div>
-
-    <button
-      class="theme-toggle"
-      type="button"
-      aria-label="Toggle color theme"
-      title="Toggle theme"
-    >
-      <svg class="icon-sun" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-        <circle cx="12" cy="12" r="4" stroke="currentColor" stroke-width="1.7"></circle>
-        <path
-          d="M12 2.5v2.2M12 19.3v2.2M4.7 4.7l1.6 1.6M17.7 17.7l1.6 1.6M2.5 12h2.2M19.3 12h2.2M4.7 19.3l1.6-1.6M17.7 6.3l1.6-1.6"
-          stroke="currentColor"
-          stroke-width="1.7"
-          stroke-linecap="round"
-        ></path>
-      </svg>
-      <svg class="icon-moon" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-        <path
-          d="M18.5 14.2A7.2 7.2 0 0 1 9.8 5.5 7.4 7.4 0 1 0 18.5 14.2Z"
-          stroke="currentColor"
-          stroke-width="1.7"
-          stroke-linejoin="round"
-        ></path>
-      </svg>
-    </button>
+    <canvas class="pixel-field" aria-hidden="true"></canvas>
 
     <main class="page">
       <section class="identity" aria-label="Profile">
@@ -89,6 +60,31 @@ const year = new Date().getFullYear();
         <p class="title">{site.title}</p>
         <p class="bio">{site.tagline}</p>
         <p class="bio">{site.bio}</p>
+
+        <button
+          class="theme-toggle"
+          type="button"
+          aria-label="Toggle color theme"
+          title="Toggle theme"
+        >
+          <svg class="icon-sun" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+            <circle cx="12" cy="12" r="4" stroke="currentColor" stroke-width="1.7"></circle>
+            <path
+              d="M12 2.5v2.2M12 19.3v2.2M4.7 4.7l1.6 1.6M17.7 17.7l1.6 1.6M2.5 12h2.2M19.3 12h2.2M4.7 19.3l1.6-1.6M17.7 6.3l1.6-1.6"
+              stroke="currentColor"
+              stroke-width="1.7"
+              stroke-linecap="round"
+            ></path>
+          </svg>
+          <svg class="icon-moon" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+            <path
+              d="M18.5 14.2A7.2 7.2 0 0 1 9.8 5.5 7.4 7.4 0 1 0 18.5 14.2Z"
+              stroke="currentColor"
+              stroke-width="1.7"
+              stroke-linejoin="round"
+            ></path>
+          </svg>
+        </button>
 
         <ul class="socials" aria-label="Social links">
           {
@@ -158,7 +154,6 @@ const year = new Date().getFullYear();
         if (persist) localStorage.setItem("theme", theme);
       };
 
-      // Enable transitions only after first paint to avoid flash
       requestAnimationFrame(() => {
         root.classList.add("theme-ready");
       });
@@ -174,6 +169,85 @@ const year = new Date().getFullYear();
         if (localStorage.getItem("theme")) return;
         applyTheme(event.matches ? "dark" : "light", false);
       });
+
+      const canvas = document.querySelector(".pixel-field");
+      const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+      if (canvas instanceof HTMLCanvasElement && !reduceMotion) {
+        const ctx = canvas.getContext("2d");
+        if (ctx) {
+          const cell = 14;
+          let width = 0;
+          let height = 0;
+          let cols = 0;
+          let rows = 0;
+          let pointer = { x: -9999, y: -9999, active: false };
+          let frame = 0;
+
+          const resize = () => {
+            const dpr = Math.min(window.devicePixelRatio || 1, 2);
+            width = window.innerWidth;
+            height = window.innerHeight;
+            cols = Math.ceil(width / cell) + 1;
+            rows = Math.ceil(height / cell) + 1;
+            canvas.width = Math.floor(width * dpr);
+            canvas.height = Math.floor(height * dpr);
+            canvas.style.width = `${width}px`;
+            canvas.style.height = `${height}px`;
+            ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+          };
+
+          const colorForTheme = () =>
+            getComputedStyle(root).getPropertyValue("--pixel").trim() || "rgba(30,58,95,0.22)";
+
+          const draw = () => {
+            frame += 1;
+            ctx.clearRect(0, 0, width, height);
+            const fill = colorForTheme();
+            ctx.fillStyle = fill;
+
+            for (let y = 0; y < rows; y += 1) {
+              for (let x = 0; x < cols; x += 1) {
+                const px = x * cell + cell / 2;
+                const py = y * cell + cell / 2;
+                const dx = px - pointer.x;
+                const dy = py - pointer.y;
+                const dist = Math.sqrt(dx * dx + dy * dy);
+                const wave = Math.sin((x + y) * 0.35 + frame * 0.018) * 0.35 + 0.65;
+                const influence = pointer.active ? Math.max(0, 1 - dist / 160) : 0;
+                const size = 1.1 + wave * 0.9 + influence * 2.4;
+                const alpha = 0.08 + wave * 0.1 + influence * 0.45;
+
+                if (alpha < 0.12 && influence < 0.05) continue;
+
+                ctx.globalAlpha = Math.min(alpha, 0.7);
+                ctx.fillRect(px - size / 2, py - size / 2, size, size);
+              }
+            }
+
+            ctx.globalAlpha = 1;
+            requestAnimationFrame(draw);
+          };
+
+          resize();
+          draw();
+          window.addEventListener("resize", resize, { passive: true });
+          window.addEventListener(
+            "pointermove",
+            (event) => {
+              pointer = { x: event.clientX, y: event.clientY, active: true };
+            },
+            { passive: true },
+          );
+          window.addEventListener(
+            "pointerleave",
+            () => {
+              pointer.active = false;
+            },
+            { passive: true },
+          );
+        }
+      }
     </script>
   </body>
 </html>

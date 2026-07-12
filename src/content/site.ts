@@ -4,7 +4,7 @@ export const site = {
   location: "Berlin, Germany",
   tagline:
     "Full-stack engineer with 10+ years building products across FinTech, eCommerce, and live operations.",
-  bio: "I build product experiences with AI-assisted workflows — shipping reliable features with Laravel and React, from regulated finance to accreditation tools.",
+  bio: "I use AI-assisted workflows to ship reliable Laravel and React features across regulated finance and accreditation tools.",
   email: "ozhanyilmaz@gmail.com",
   photo: "/photo.jpg",
   url: "https://ozhan.xyz",
