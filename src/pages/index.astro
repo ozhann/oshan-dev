@@ -13,7 +13,7 @@ const year = new Date().getFullYear();
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="description" content={`${site.name} — ${site.title}. ${site.tagline}`} />
-    <meta name="theme-color" content="#f3eee6" />
+    <meta name="theme-color" content="#f4f6f8" />
     <link rel="canonical" href={site.url} />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -40,14 +40,7 @@ const year = new Date().getFullYear();
         </div>
 
         <p class="location">
-          <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
-            <path
-              d="M12 21s7-5.2 7-11a7 7 0 1 0-14 0c0 5.8 7 11 7 11Z"
-              stroke="currentColor"
-              stroke-width="1.6"
-            ></path>
-            <circle cx="12" cy="10" r="2.2" stroke="currentColor" stroke-width="1.6"></circle>
-          </svg>
+          <span class="online-dot" title="Available" aria-hidden="true"></span>
           {site.location}
         </p>
 
@@ -78,14 +71,16 @@ const year = new Date().getFullYear();
                 {project.href ? (
                   <a href={project.href} target="_blank" rel="noopener noreferrer">
                     <span class="project-name">{project.name}</span>
-                    <span class="project-tag">{project.tag}</span>
-                    <span class="project-desc">{project.description}</span>
+                    <span class="project-meta">
+                      {project.role} · {project.industry}
+                    </span>
                   </a>
                 ) : (
                   <div class="project-static">
                     <span class="project-name">{project.name}</span>
-                    <span class="project-tag">{project.tag}</span>
-                    <span class="project-desc">{project.description}</span>
+                    <span class="project-meta">
+                      {project.role} · {project.industry}
+                    </span>
                   </div>
                 )}
               </li>
@@ -94,7 +89,7 @@ const year = new Date().getFullYear();
         </ul>
       </section>
 
-      <section class="section section-activity" aria-labelledby="activity-heading">
+      <section class="section" aria-labelledby="activity-heading">
         <h2 id="activity-heading" class="section-label">Activity</h2>
         <Heatmap calendar={calendar} username={site.githubUsername} />
       </section>
