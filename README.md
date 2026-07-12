@@ -1,6 +1,6 @@
 # ozhan.xyz
 
-Personal site for **Özhan Yilmaz** — Senior Software Engineer in Berlin.
+Personal site for **Özhan Yılmaz** — Senior Software Engineer in Berlin.
 
 Built with [Astro](https://astro.build) and deployed as a Cloudflare Worker (static assets).
 

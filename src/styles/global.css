@@ -143,7 +143,7 @@ html[data-theme="dark"] .theme-toggle .icon-moon {
 .page {
   width: min(100% - 1.5rem, var(--max));
   margin: 0 auto;
-  padding: 2.75rem 0 3rem;
+  padding: 1.15rem 0 3rem;
   text-align: center;
 }
 
@@ -153,7 +153,7 @@ html[data-theme="dark"] .theme-toggle .icon-moon {
   justify-content: space-between;
   gap: 1rem;
   width: 100%;
-  margin: 0 0 1.75rem;
+  margin: 0 0 1.35rem;
   min-height: 2rem;
 }
 
@@ -178,8 +178,9 @@ html[data-theme="dark"] .theme-toggle .icon-moon {
   width: 100%;
   height: 100%;
   object-fit: cover;
-  object-position: center 20%;
-  transform: scale(1.02);
+  object-position: center 8%;
+  transform: scale(1.48);
+  transform-origin: center 18%;
 }
 
 .location {
@@ -477,6 +478,20 @@ html[data-theme="dark"] .theme-toggle .icon-moon {
   }
 }
 
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation: none;
+  mix-blend-mode: normal;
+}
+
+::view-transition-old(root) {
+  z-index: 1;
+}
+
+::view-transition-new(root) {
+  z-index: 2;
+}
+
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,
@@ -506,7 +521,7 @@ html[data-theme="dark"] .theme-toggle .icon-moon {
 
 @media (max-width: 480px) {
   .page {
-    padding-top: 2.25rem;
+    padding-top: 1rem;
   }
 
   .photo-wrap {

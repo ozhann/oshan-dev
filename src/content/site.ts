@@ -1,5 +1,5 @@
 export const site = {
-  name: "Özhan Yilmaz",
+  name: "Özhan Yılmaz",
   title: "Senior Software Engineer",
   location: "Berlin, Germany",
   tagline:

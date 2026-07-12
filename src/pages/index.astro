@@ -162,9 +162,54 @@ const year = new Date().getFullYear();
 
       syncThemeChrome(root.dataset.theme === "dark" ? "dark" : "light");
 
-      toggle?.addEventListener("click", () => {
+      const toggleTheme = async (event: Event) => {
         const next = root.dataset.theme === "dark" ? "light" : "dark";
-        applyTheme(next);
+        const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+        const canTransition =
+          !reduceMotion &&
+          "startViewTransition" in document &&
+          event instanceof MouseEvent;
+
+        if (!canTransition) {
+          applyTheme(next);
+          return;
+        }
+
+        const x = event.clientX;
+        const y = event.clientY;
+        const endRadius = Math.hypot(
+          Math.max(x, window.innerWidth - x),
+          Math.max(y, window.innerHeight - y),
+        );
+
+        root.classList.remove("theme-ready");
+
+        const transition = document.startViewTransition(() => {
+          applyTheme(next);
+        });
+
+        await transition.ready;
+
+        document.documentElement.animate(
+          {
+            clipPath: [
+              `circle(0px at ${x}px ${y}px)`,
+              `circle(${endRadius}px at ${x}px ${y}px)`,
+            ],
+          },
+          {
+            duration: 560,
+            easing: "cubic-bezier(0.4, 0, 0.2, 1)",
+            pseudoElement: "::view-transition-new(root)",
+          },
+        );
+
+        await transition.finished;
+        root.classList.add("theme-ready");
+      };
+
+      toggle?.addEventListener("click", (event) => {
+        void toggleTheme(event);
       });
 
       window.matchMedia("(prefers-color-scheme: dark)").addEventListener("change", (event) => {
