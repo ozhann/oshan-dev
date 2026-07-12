@@ -1,8 +1,8 @@
-# oshan.xyz
+# ozhan.xyz
 
 Personal site for **Özhan Yilmaz** — Senior Software Engineer in Berlin.
 
-Built with [Astro](https://astro.build) and deployed to Cloudflare Pages.
+Built with [Astro](https://astro.build) and deployed as a Cloudflare Worker (static assets).
 
 ## Develop
 
@@ -18,7 +18,12 @@ npm run dev
 
 ```bash
 export GITHUB_TOKEN="$(gh auth token)"
+export CLOUDFLARE_API_TOKEN="..."   # or use an existing `wrangler login` session
 npm run deploy
 ```
 
-Custom domain: `ozhan.xyz`
+## URLs
+
+- Production: https://ozhan.xyz
+- www: https://www.ozhan.xyz
+- Preview: https://ozhan-xyz.ozhanyilmaz.workers.dev
